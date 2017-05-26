@@ -36,9 +36,13 @@ and then you shold put the training datas in the format of Weka, like this way:
 next, use W2C.class:
 .. code:: java
     java W2C train <filename:training-source-root>
+
                    <filename:feature-transforming model>
+
                    <minGramCount :min number of the grams>
+
                    <maxGramCount :max number of the grams>
+
                    <WekaResults:results about dealing with the training datas>
 
 Finished the tasks above, you've create a file like "Results.txt"(it's the input argument "WekaResults" of the W2C.class) in the workspace.
