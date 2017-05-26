@@ -11,11 +11,17 @@ PythonWithWeka
 -验证方法：
 
   包括但不限于验证不同Ontology的Entities的可分性。
+  
   算法包括：
+
     rbf-svm
+
     linear-svm
+
     randomforest
+
     naive-bayes
+
     kmeans
     ...
     (总之算法本身只是调用sklearn,参数默认，没什么意思...)
