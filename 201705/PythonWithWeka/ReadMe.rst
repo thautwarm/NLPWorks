@@ -18,16 +18,20 @@ Firstly, you should compile W2C.java with your JDK ,
 and then you shold put the training datas in the format of Weka, like this way:
         -"training-source-root"
             -class1
-                -instance1.txt
-                -instance2.txt
-                -instance3.txt
+                instance1.txt
+                ,
+                instance2.txt
+                ,
+                instance3.txt
                 ...
             -class2
-                -instances1.txt
-                -instance2.txt
-                -instance3.txt
+                instances1.txt
+                ,
+                instance2.txt
+                ,
+                instance3.txt
                 ...
-            ...
+            -...
 
 next, use W2C.class:
 .. code:: java
