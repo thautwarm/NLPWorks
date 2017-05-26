@@ -34,7 +34,10 @@ and then you shold put the training datas in the format of Weka, like this way:
             -...
 
 next, use W2C.class:
+
 .. code:: java
+
+
     java W2C train <filename:training-source-root>
 
                    <filename:feature-transforming model>
@@ -50,6 +53,8 @@ Finished the tasks above, you've create a file like "Results.txt"(it's the input
 Then we using getPyW2CMd.py to make a model which can be used in Python Programs like gensim.models.Word2Vec.
 
 .. code:: shell
+
+
     python getPyW2CMd.py <filename:training-source-root> <filename:WekaResults> <filename:PythonModel>
 
 And then you create a file which is in Json format in fact. It's a Word2Vec model.
@@ -57,6 +62,8 @@ And then you create a file which is in Json format in fact. It's a Word2Vec mode
 If the file PythonModel exists, you can use the Word2Vec Model in this way:
 
 .. code:: python
+
+
     from PyWekaMake import W2C,makeX
 
     posEntities=['Publications_of_the_Astronomical_Society_of_the_Pacific,'
