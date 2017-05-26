@@ -31,7 +31,8 @@ and then you shold put the training datas in the format of Weka, like this way:
                 ,
                 instance3.txt
                 ...
-            -class...
+            -class
+                isinstance
                 ...
 
 next, use W2C.class:
