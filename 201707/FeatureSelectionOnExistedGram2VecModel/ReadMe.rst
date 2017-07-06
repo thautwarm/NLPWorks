@@ -5,7 +5,7 @@ to do feature selection on  <model>.json.
 
 - <model>.jsom
 	
-..code:: json
+.. code:: json
 
 	["<entity1>": [[<keyNum , N-Gram Index>],[<keyValue , TFIDF>]]
 	...
@@ -50,13 +50,13 @@ Next, write a config file in ".json" like:
 
 Finally, run this project:
 
-..code:: shell
+.. code:: shell
 	
 	python dicttake.py config.json
 
 then you get 3 new files here:
 
-..code:: PlainText
+.. code:: PlainText
 	
 	testone_corr.json
 	testone_entropy.json
@@ -64,7 +64,7 @@ then you get 3 new files here:
 
 As specific suffix suggests, the new models are decomposed(reduced) by following methods:
 
-..code:: PlainText	
+.. code:: PlainText	
 		
 	Correlation
 	Entropy
