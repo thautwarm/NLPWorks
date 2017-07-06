@@ -1,2 +1,3 @@
-.js  linguist-language=Kotlin
+.kt  linguist-language=Kotlin
 .jar linguist-language=Kotlin
+.java linguist-language=Kotlin
