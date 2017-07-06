@@ -1,1 +1,0 @@
-java -Djava.ext.dirs=./lib  -jar Selector.jar {filename} {selectNum}
