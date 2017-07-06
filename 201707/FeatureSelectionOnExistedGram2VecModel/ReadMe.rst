@@ -7,7 +7,7 @@ to do feature selection on  <model>.json.
 	
 .. code:: json
 
-	["<entity1>": [[<keyNum , N-Gram Index>],[<keyValue , TFIDF>]]
+	["<entity1>": [[<keyNum( N-Gram Index ) >],[<keyValue(TFIDF features)>]]
 	...
 	]
 
