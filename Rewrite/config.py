@@ -4,8 +4,11 @@ from algorithm.utils import manager, getCSVInfo, np, makedir_from
 from freestyle.collections import globals_manager,block,richIterator,richList
 
 from algorithm.classifier import wrap, cluster
-from sklearn.preprocessing import StandardScaler
 from algorithm.stats import stats,undersampling  
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.externals import joblib
+
 import os
 import sys
 from pack_imp import *
@@ -161,6 +164,7 @@ def Test(W2V:Word2vector_model, Data:Manager, decomposition_method, root_dir:Pat
         train_X, train_y, train_ori_name  = get_train_datas_from_ontology(ontology)
         
         train_X, test_X = makeX( train_X, test_X ) 
+        
         std = StandardScaler(); std.fit(train_X)
         train_X = std.transform(train_X); test_X = std.transform(test_X)
         
@@ -168,11 +172,12 @@ def Test(W2V:Word2vector_model, Data:Manager, decomposition_method, root_dir:Pat
         try:
             print(f'feature_num before decomposition :{test_X.shape[1]}')
             train_X_r, test_X_r = decomposition_method(train_X,train_y)(train_X, test_X)
-            print(f'feature_num after decomposition :{test_X.shape[1]}')
+            print(f'feature_num after decomposition :{test_X_r.shape[1]}')
             if train_X_r.shape[1] !=0:
                 train_X, test_X = train_X_r, test_X_r
         except:
             pass
+        
         
         # fit and predict
         clf = methods[method]()
@@ -194,6 +199,8 @@ def Test(W2V:Word2vector_model, Data:Manager, decomposition_method, root_dir:Pat
         df_results.fillna(value = "").to_csv(os.path.join(stats_to_here, 'res.csv'), index=False, encoding='utf8')
         print(ontology,' / ', method )
         print(pd.Series(res))
+        res['method'] = method
+        res['ontology'] = ontology
         return res
 
     def Experiment_on_Cluster(method : Method, ontology : Ontology, stats_to_here:Path):
@@ -202,8 +209,9 @@ def Test(W2V:Word2vector_model, Data:Manager, decomposition_method, root_dir:Pat
         test_X,  test_y , test_ori_name   = get_test_datas_from_ontology(ontology)
         train_X = test_X
         train_y = test_y
-                
+               
         test_X, train_X = makeX( test_X, train_X )
+        
         std = StandardScaler(); std.fit(train_X)
         train_X = std.transform(train_X); test_X = std.transform(test_X)
         
@@ -211,11 +219,12 @@ def Test(W2V:Word2vector_model, Data:Manager, decomposition_method, root_dir:Pat
         try:
             print(f'feature_num before decomposition :{test_X.shape[1]}')
             train_X_r, test_X_r = decomposition_method(train_X,train_y)(train_X, test_X)
-            print(f'feature_num after decomposition :{test_X.shape[1]}')
+            print(f'feature_num after decomposition :{test_X_r.shape[1]}')
             if train_X_r.shape[1] !=0:
                 train_X, test_X = train_X_r, test_X_r
         except:
             pass
+        
 
         
         # fit and predict
@@ -237,6 +246,8 @@ def Test(W2V:Word2vector_model, Data:Manager, decomposition_method, root_dir:Pat
         df_results.fillna(value = "").to_csv(os.path.join(stats_to_here, 'res.csv'), index=False, encoding='utf8')
         print(ontology,' / ', method )
         print(pd.Series(res))
+        res['method'] = method
+        res['ontology'] = ontology
         return res
 
     def foreach(ontology:(Ontology,str) ) :
@@ -249,23 +260,20 @@ def Test(W2V:Word2vector_model, Data:Manager, decomposition_method, root_dir:Pat
              .connectedWith(
                     (lambda case: case is True,  
                      lambda case: richList(this[isCluster])\
-                                    .map(lambda method: (method,
-                                        Experiment_on_Cluster(method, ontology, stats_to_here(method  )))).todict()
+                                    .map(lambda method: \
+                                        Experiment_on_Cluster   (method, ontology, stats_to_here(method))).tolist()
                     ), # if cluster
                      lambda case: richList(this[not isCluster])\
-                                    .map(lambda method: (method,
-                                        Experiment_on_Classifier(method,ontology,stats_to_here(method )))).todict()
+                                    .map(lambda method: \
+                                        Experiment_on_Classifier(method, ontology, stats_to_here(method))).tolist()
                     # otherwise
                      ).tolist()
                                         
-        res = res_of_cluster_and_classif[0]
-        res.update(res_of_cluster_and_classif[1])
+        res = res_of_cluster_and_classif[0]+res_of_cluster_and_classif[1]
+        print(pd.DataFrame(res))
         return res
-    res_all =  pd.DataFrame(  richList(dfs_of_train.keys()).map(foreach).tolist() )
-    last = res_all.shape[0]
-    res_all.loc[last] = res_all.mean()
-
-    res_all.to_csv("{root_dir}/stats.all".format(root_dir = root_dir), index=False,encoding='utf8')
+    res_all =  pd.DataFrame(richList(dfs_of_train.keys()).map(foreach)@(lambda this: sum(this, [])))
+    res_all.to_csv("stats-all-{root_dir}.csv".format(root_dir = root_dir), index=False,encoding='utf8')
 
     
     
