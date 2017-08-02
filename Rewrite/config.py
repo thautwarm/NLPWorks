@@ -36,7 +36,9 @@ Experiment = 'experiment'
 Manager = manager
 Method  = 'method'
 # =================
-closure = globals_manager(globals())
+
+closure = globals_manager(globals()) # 使得 继承自richIterator的容器类的let方法 把变量绑定到当前模块的全局变量
+
 
 
 traindata = '{desktop}/TrainDatas'
