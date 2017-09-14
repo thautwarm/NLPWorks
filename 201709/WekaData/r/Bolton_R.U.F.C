@@ -1,0 +1,1 @@
+bolton rufc are an amateur rugby union team who play in the north 1 west league of the english rugby union league system.

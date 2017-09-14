@@ -1,0 +1,1 @@
+a comma-free code is block code in which no concatenation of two code words contains a valid code word that overlaps both. comma-free codes are also known as self-synchronizing block codes because no synchronization is required to find the beginning of a code word.
