@@ -6,6 +6,8 @@ from DBPedia.dbpediaService import DBPediaSPARQL
 import warnings
 from random import shuffle
 import math
+from typing import List, Dict
+from scalable.core import fn
 
 
 def selectOntology(group : "dict[str:char->list[str:ontology]])", cache_from_ontology_to_select=40, to_select = 2600) \
@@ -41,6 +43,16 @@ def selectOntology(group : "dict[str:char->list[str:ontology]])", cache_from_ont
             entities[group_name].update(cache[:n])
             ontology_cache[group_name] = cache[n:]
     return entities
+
+
+
+def SelectCluster(lst : List[str], limit = 200) -> Dict[str, Dict[str, str]]:
+    print("SelectCluster")
+    def _f(entity:str) -> Dict[str, str]:
+        return DBPediaSPARQL.getRelatedWithAbstractFromEntity(entity, limit)
+    return dict(zip(lst, list(fn.map(_f)(lst)) ))
+
+
 
 
 
