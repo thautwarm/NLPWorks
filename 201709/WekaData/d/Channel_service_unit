@@ -1,6 +1,0 @@
-in telecommunications, a channel service unit (csu) is a line bridging device for use with t-carrier that: 
-* is used to perform loopback testing, 
-* may perform bit stuffing, 
-* may also provide a framing and formatting pattern compatible with the network, 
-* provides a barrier for electrical interference from either side of the unit, and 
-* is the last signal regeneration point, on the loop side, coming from the central office, before the regenerated signal reaches a multiplexer or data terminal equipment (dte).

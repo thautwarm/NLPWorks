@@ -1,1 +1,0 @@
-docs.com is a site where users can discover, upload and share office documents on their profile page. supported file types include word documents, excel spreadsheets, powerpoint presentations, mix video presentations and sways. users can also add pdf's and url's on to their page. docs.com is a part of microsoft office online.

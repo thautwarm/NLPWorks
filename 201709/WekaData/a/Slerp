@@ -1,1 +1,0 @@
-in computer graphics, slerp is shorthand for spherical linear interpolation, introduced by ken shoemake in the context of quaternion interpolation for the purpose of animating 3d rotation. it refers to constant-speed motion along a unit-radius great circle arc, given the ends and an interpolation parameter between 0 and 1.
