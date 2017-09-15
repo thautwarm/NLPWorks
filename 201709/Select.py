@@ -6,7 +6,7 @@ from DBPedia.dbpediaService import DBPediaSPARQL
 import warnings
 from random import shuffle
 import math
-from typing import List, Dict
+from typing import List, Dict, Any, Callable
 from scalable.core import fn
 
 
@@ -46,11 +46,31 @@ def selectOntology(group : "dict[str:char->list[str:ontology]])", cache_from_ont
 
 
 
-def SelectCluster(lst : List[str], limit = 200) -> Dict[str, Dict[str, str]]:
+def SelectCluster(lst : List[str], func:Callable[[str],List[str]] = DBPediaSPARQL.getFromCapitalChar, count_foreach = 100, select_foreach = 200) -> Dict[str, Dict[str, str]]:
     print("SelectCluster")
-    def _f(entity:str) -> Dict[str, str]:
-        return DBPediaSPARQL.getRelatedWithAbstractFromEntity(entity, limit)
-    return dict(zip(lst, list(fn.map(_f)(lst)) ))
+    def _f1(char:chr):
+        return func(char, limit=count_foreach*10)
+
+    def _f2(ent:str) -> Dict[str, Dict[str, Any]]:
+        return DBPediaSPARQL.getRelatedWithAbstractFromEntity(ent, select_foreach)
+    ret = dict()
+    for ch in lst:
+        entities = _f1(ch)
+        _count   = 0
+        for entity in entities:
+            r = _f2(entity)
+            if r is None:
+                continue
+            ret[entity] = r
+            _count += 1
+            if _count==count_foreach: break
+        else:
+            warnings.warn(f"Not Enough entities for group[{ch}]")
+    return ret
+
+
+
+    return dict(zip(lst, fn.map(_f2)(lst)))
 
 
 

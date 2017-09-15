@@ -4,7 +4,7 @@ Created on Sun May 28 23:18:12 2017
 
 @author: thautwarm
 """
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Any
 from SPARQLWrapper import SPARQLWrapper, JSON
 def beginWith(Astr, begin):
     return Astr[:len(begin)] == begin
@@ -141,29 +141,41 @@ class DBPediaSPARQL:
         return Ret
 
     @staticmethod
-    def getRelatedWithAbstractFromEntity(entity:str, limit = 200) -> Dict[str, str]:
+    def getRelatedWithAbstractFromEntity(entity:str, limit = 200) -> Dict[str, Dict[str, Any]]:
         print(f"Entity :{entity} ")
         sparql = SPARQLWrapper("http://dbpedia.org/sparql")
         sparql.setMethod("POST")
         body = f"""
         PREFIX dbo: <http://dbpedia.org/ontology/>
         PREFIX dbr: <http://dbpedia.org/resource/>
-        SELECT ?res ?abstract
+        SELECT ?res ?type ?abstract
         where{{
-            <http://dbpedia.org/resource/{entity}> ?property ?res . ?res dbo:abstract ?abstract
+            <http://dbpedia.org/resource/{entity}> ?property ?res . ?res dbo:abstract ?abstract . ?res a ?type
             FILTER (lang(?abstract) = 'en') . 
-            FILTER regex(?res, "http://dbpedia.org/resource/(?!Category:)", "i") 
+            FILTER regex(?res, "http://dbpedia.org/resource/(?!Category:)", "i")  .
+            FILTER regex(?type, "http://dbpedia.org/ontology/", "i") .
+            FILTER regex(?res, "http://dbpedia.org/resource/[a-zA-z_0-9]+", "i") 
         }}
         LIMIT {limit}
         """
         sparql.setQuery(body)
         sparql.setReturnFormat(JSON)
         results = sparql.query().convert()
-        Ret=[]
+
+        if len(set([results['res']['value'] for results in results['results']['bindings']])) < limit:
+            return None
+
+        Ret = dict()
         for result in results["results"]["bindings"]:
-            Ret.append( (result["res"]     ["value"][headerLength:],
-                         result["abstract"]["value"]))
-        return dict(Ret)
+            res      = result["res"]["value"][headerLength:]
+            ontology = result['type']['value'][ontologyheaderLength:]
+            if res not in Ret:
+                abstract=result["abstract"]["value"]
+                Ret[res] = dict(ontology = {ontology},  abstract  = abstract)
+            else:
+                Ret[res]["ontology"].update({ontology})
+
+        return Ret
 
 
 
