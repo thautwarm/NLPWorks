@@ -49,6 +49,7 @@ def selectOntology(group : "dict[str:char->list[str:ontology]])", cache_from_ont
 def SelectCluster(lst : List[str], func:Callable[[str],List[str]] = DBPediaSPARQL.getFromCapitalChar, count_foreach = 100, select_foreach = 200) -> Dict[str, Dict[str, str]]:
     print("SelectCluster")
     def _f1(char:chr):
+        print(char)
         return func(char, limit=count_foreach*10)
 
     def _f2(ent:str) -> Dict[str, Dict[str, Any]]:
