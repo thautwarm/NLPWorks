@@ -59,7 +59,9 @@ def SelectCluster(lst : List[str], func:Callable[[str],List[str]] = DBPediaSPARQ
         entities = _f1(ch)
         _count   = 0
         for entity in entities:
-            r = _f2(entity)
+            try:
+               r = _f2(entity)
+            except:continue
             if r is None:
                 continue
             ret[entity] = r
