@@ -58,7 +58,7 @@ class DBPediaSPARQL:
         PREFIX dbr: <http://dbpedia.org/resource/>
         SELECT  DISTINCT ?entity
                 WHERE{{ ?entity ?p ?type
-                       FILTER regex(?entity, "http://dbpedia.org/resource/{ch}", "i") 
+                       FILTER regex(?entity, "http://dbpedia.org/resource/{ch}([a-zA-Z0-9_]*)$", "i") .
                 }}
                 LIMIT {limit}
         """
@@ -154,7 +154,7 @@ class DBPediaSPARQL:
             FILTER (lang(?abstract) = 'en') . 
             FILTER regex(?res, "http://dbpedia.org/resource/(?!Category:)", "i")  .
             FILTER regex(?type, "http://dbpedia.org/ontology/", "i") .
-            FILTER regex(?res, "http://dbpedia.org/resource/[a-zA-z_0-9]+", "i") 
+            FILTER regex(?res,  "http://dbpedia.org/resource/([a-zA-Z0-9_]+)$","i") 
         }}
         LIMIT {limit}
         """

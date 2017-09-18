@@ -38,7 +38,7 @@ def DBPedia2WekaData(dictionary:Dict[str, Dict[str, Dict[str, Any]]], path) -> N
             with open(f"{directory}/{related_entity}", 'w', encoding='utf8') as file:
                 file.write(entity['abstract'])
     index = {key:list(index[key]) for key in index}
-    with open('./index.json', 'w') as jsonFile:
+    with open(f'./index.json', 'w') as jsonFile:
         json.dump(dict(index), jsonFile)
     return index
 
