@@ -6,6 +6,7 @@ Created on Sun May 28 23:18:12 2017
 """
 from typing import Dict, List, Tuple, Any
 from SPARQLWrapper import SPARQLWrapper, JSON
+from collections import defaultdict
 def beginWith(Astr, begin):
     return Astr[:len(begin)] == begin
 
@@ -141,8 +142,7 @@ class DBPediaSPARQL:
         return Ret
 
     @staticmethod
-    def getRelatedWithAbstractFromEntity(entity:str, limit = 200) -> Dict[str, Dict[str, Any]]:
-        print(f"Entity :{entity} ")
+    def getRelatedWithAbstractFromEntity(entity:str, limit = 100) -> Dict[str, Dict[str, Any]]:
         sparql = SPARQLWrapper("http://dbpedia.org/sparql")
         sparql.setMethod("POST")
         body = f"""
@@ -161,8 +161,9 @@ class DBPediaSPARQL:
         sparql.setQuery(body)
         sparql.setReturnFormat(JSON)
         results = sparql.query().convert()
-
-        if len(set([results['res']['value'] for results in results['results']['bindings']])) < limit:
+        num     = len(set([results['res']['value'] for results in results['results']['bindings']]))
+        if num < limit:
+            print(f"{entity} has {num} related words.")
             return None
 
         Ret = dict()
@@ -176,7 +177,49 @@ class DBPediaSPARQL:
                 Ret[res]["ontology"].update({ontology})
 
         return Ret
-
+    @staticmethod
+    def GetEntityAbstPairsFromCapitalChar():
+        sparql=SPARQLWrapper("http://dbpedia.org/sparql")
+        sparql.setMethod("POST")
+        body = \
+        """
+        PREFIX dbo: <http://dbpedia.org/ontology/>
+        PREFIX dbr: <http://dbpedia.org/resource/>
+        SELECT DISTINCT ?entity ?res ?type ?abstract
+        where{
+            ?entity ?property1 ?onto .
+            ?entity ?property2 ?res  . 
+            ?res dbo:abstract ?abstract .
+            ?res a ?type
+            FILTER (lang(?abstract) = 'en') . 
+            FILTER regex(?entity, "http://dbpedia.org/resource/[a-zA-Z]", "i")
+            FILTER regex(?res, "http://dbpedia.org/resource/(?!Category:)", "i")  .
+            FILTER regex(?type, "http://dbpedia.org/ontology/", "i") .
+            FILTER regex(?res,  "http://dbpedia.org/resource/([a-zA-Z0-9_]+)$","i") 
+        }
+        LIMIT 30000
+        """
+        sparql.setQuery(body)
+        sparql.setReturnFormat(JSON)
+        results  = sparql.query().convert()
+        bindings = results["results"]["bindings"]
+        pandas_cache  = defaultdict(list)
+        abstract_index = dict()
+        ontology_index = dict()
+        for result in bindings:
+            entity   = result['res']   ['value'][headerLength:]
+            ontology = result['type']  ['value'][headerLength:]
+            pandas_cache['group'] .append(result['entity']['value'][headerLength:])
+            pandas_cache['entity']  .append(entity)
+            pandas_cache['ontology'].append(ontology)
+            if entity not in abstract_index:
+                abstract=result['abstract']['value']
+                abstract_index[entity] = abstract
+            if entity not in ontology_index:
+                ontology_index[entity] = {ontology}
+            else:
+                ontology_index[entity].add(ontology)
+        return pandas_cache, abstract_index, ontology_index
 
 
 

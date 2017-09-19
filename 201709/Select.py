@@ -6,7 +6,7 @@ from DBPedia.dbpediaService import DBPediaSPARQL
 import warnings
 from random import shuffle
 import math
-from typing import List, Dict, Any, Callable
+from typing import List, Dict, Any, Callable, Tuple
 from scalable.core import fn
 
 
@@ -55,15 +55,18 @@ def selectClusterCh(ch:str, func:Callable[[str],List[str]] = DBPediaSPARQL.getFr
     ret = dict()
     _count=0
     for entity in entities:
+
         try:
             r=_f2(entity)
         except Exception as e:
             print(e)
             continue
+        print(r)
         if r is None:
             continue
         ret[entity]=r
         _count+=1
+        print(f'add Entity <= {entity}')
         if _count == count_foreach: break
     else:
         warnings.warn(f"Not Enough entities for group[{ch}]")
@@ -94,6 +97,19 @@ def SelectCluster(lst : List[str], func:Callable[[str],List[str]] = DBPediaSPARQ
         else:
             warnings.warn(f"Not Enough entities for group[{ch}]")
     return ret
+
+
+def selectNegativeFromIndex(entity:str, from_index:List[Tuple[str, List[str]]], selectNum) -> List[str]:
+    ret:List[str] = []
+    total:int     = 0
+    for entity, ontologies in from_index:
+        if entity not in ontologies:
+            ret.append(entity)
+            total+=1
+            if total > selectNum:
+                break
+    return ret
+
 
 
 
