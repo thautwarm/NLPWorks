@@ -28,7 +28,7 @@ def loadJson(filename):
 
 def DBPedia2WekaData(ontology_index:Dict[str, set], abstract_index: Dict[str, str], path:str):
 
-    for entity,ontologies in ontology_index:
+    for entity,ontologies in ontology_index.items():
         for ontology in ontologies:
             directory = f"{path}/{ontology}"
             try:

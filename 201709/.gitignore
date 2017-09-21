@@ -8,4 +8,6 @@ trainingRes/
 Test/
 testRes/
 .idea/
-
+weka/
+ontology_index
+abstract_index
