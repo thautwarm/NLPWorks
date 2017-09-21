@@ -69,7 +69,6 @@ class DBPediaSPARQL:
         Ret=[]
         for result in results["results"]["bindings"]:
             Ret.append(result["entity"]["value"][headerLength:])
-        print(f"Total : {len(Ret)}")
         return Ret
 
 
@@ -142,7 +141,7 @@ class DBPediaSPARQL:
         return Ret
 
     @staticmethod
-    def getRelatedWithAbstractFromEntity(entity:str, limit = 100) -> Dict[str, Dict[str, Any]]:
+    def getRelatedWithAbstractFromEntity(entity:str, ontology_index ,abstract_index, min_select = 30, max_select = 200) -> int:
         sparql = SPARQLWrapper("http://dbpedia.org/sparql")
         sparql.setMethod("POST")
         body = f"""
@@ -156,27 +155,27 @@ class DBPediaSPARQL:
             FILTER regex(?type, "http://dbpedia.org/ontology/", "i") .
             FILTER regex(?res,  "http://dbpedia.org/resource/([a-zA-Z0-9_]+)$","i") 
         }}
-        LIMIT {limit}
+        LIMIT {max_select}
         """
         sparql.setQuery(body)
         sparql.setReturnFormat(JSON)
         results = sparql.query().convert()
         num     = len(set([results['res']['value'] for results in results['results']['bindings']]))
-        if num < limit:
-            print(f"{entity} has {num} related words.")
+        if num < min_select:
             return None
 
-        Ret = dict()
         for result in results["results"]["bindings"]:
             res      = result["res"]["value"][headerLength:]
             ontology = result['type']['value'][ontologyheaderLength:]
-            if res not in Ret:
-                abstract=result["abstract"]["value"]
-                Ret[res] = dict(ontology = {ontology},  abstract  = abstract)
+            if res not in ontology_index:
+                ontology_index[res] = {ontology}
             else:
-                Ret[res]["ontology"].update({ontology})
+                ontology_index[res].add(ontology)
+            if res not in abstract_index:
+                abstract_index[res] = result["abstract"]["value"]
 
-        return Ret
+        return num
+
     @staticmethod
     def GetEntityAbstPairsFromCapitalChar():
         sparql=SPARQLWrapper("http://dbpedia.org/sparql")

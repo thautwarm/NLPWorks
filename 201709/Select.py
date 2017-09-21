@@ -45,17 +45,20 @@ def selectOntology(group : "dict[str:char->list[str:ontology]])", cache_from_ont
     return entities
 
 
-def selectClusterCh(ch:str, func:Callable[[str],List[str]] = DBPediaSPARQL.getFromCapitalChar,count_foreach = 100, select_foreach = 200) -> Dict[str, str]:
+def selectClusterCh(ch:str,
+                    ontology_index,
+                    abstract_index,
+                    func:Callable[[str],List[str]] = DBPediaSPARQL.getFromCapitalChar,
+                    count_foreach = 100,
+                    min_select = 30,
+                    max_select = 200) -> Dict[str, str]:
     def _f1(char:chr):
-        print(char)
         return func(char, limit=count_foreach*10)
     def _f2(ent:str) -> Dict[str, Dict[str, Any]]:
-        return DBPediaSPARQL.getRelatedWithAbstractFromEntity(ent, select_foreach)
+        return DBPediaSPARQL.getRelatedWithAbstractFromEntity(ent, ontology_index, abstract_index, min_select, max_select)
     entities = _f1(ch)
-    ret = dict()
     _count=0
     for entity in entities:
-
         try:
             r=_f2(entity)
         except Exception as e:
@@ -64,19 +67,17 @@ def selectClusterCh(ch:str, func:Callable[[str],List[str]] = DBPediaSPARQL.getFr
         print(r)
         if r is None:
             continue
-        ret[entity]=r
         _count+=1
-        print(f'add Entity <= {entity}')
+        print(f'add Related Entities from <= {entity}')
         if _count == count_foreach: break
     else:
         warnings.warn(f"Not Enough entities for group[{ch}]")
-    return ret
+
 
 
 def SelectCluster(lst : List[str], func:Callable[[str],List[str]] = DBPediaSPARQL.getFromCapitalChar, count_foreach = 100, select_foreach = 200) -> Dict[str, Dict[str, str]]:
     print("SelectCluster")
     def _f1(char:chr):
-        print(char)
         return func(char, limit=count_foreach*10)
 
     def _f2(ent:str) -> Dict[str, Dict[str, Any]]:

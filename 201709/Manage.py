@@ -20,25 +20,16 @@ except Exception: # any
     from ooutils.io import DBPedia2WekaData, dumpJson, dump
     from scalable.core import foreach, fn
     grp = [ chr(ch) for ch in range(ord('a'), ord('z')+1)]
-
+    ontology_index = dict()
+    abstract_index = dict()
     def CharAction(ch : str):
-        result = selectClusterCh(ch, count_foreach=100, select_foreach=100)
+        selectClusterCh(ch, ontology_index, abstract_index, count_foreach=100, min_select=30, max_select=200)
         print(f"Finished {ch}.")
-        return result
     with concurrent.futures.thread.ThreadPoolExecutor(max_workers=26) as executor:
-        res = list(executor.map(CharAction, grp))
-    dump(res, "res")
-    results = fn.reduce(lambda x,y: x.update(y) or x)(res)
-    dump(results, ettFile)
-    print(len(results), ' ---- results')
-    index, grouped_by_ontology = DBPedia2WekaData(results, './weka')
-    dumpJson(index, "index.json")
-    dump(grouped_by_ontology, "wekaBinarySource")
-
-    foreach(grp)(CharAction)
-    res = SelectCluster(lst = grp)
-    dump(res, ettFile)
-    DBPedia2WekaData(res, './weka')
+        executor.map(CharAction, grp)
+    dump(ontology_index, "ontology_index")
+    dump(abstract_index, "abstract_index")
+    DBPedia2WekaData(ontology_index, abstract_index, './weka')
 
 
 
