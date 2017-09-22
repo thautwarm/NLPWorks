@@ -1,0 +1,1 @@
+java -Xmn512m -Xms1024m -Xmx2048m -Djava.ext.dirs=./lib  -jar Selector.jar {filename} {selectNum}

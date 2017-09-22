@@ -1,0 +1,41 @@
+[
+ {"jarRunFileName":"javaRun.bat",
+  "JSONFileName":"./Train/Traindata_1gram_ft.json",
+  "to_ArffFileName":"./trainRes/train1gram",
+  "selectFeatureNum":"1000"},
+
+ {"jarRunFileName":"javaRun.bat",
+  "JSONFileName":"./Train/Traindata_2gram_ft.json",
+  "to_ArffFileName":"./trainRes/train2gram",
+  "selectFeatureNum":"1000"},
+
+ {"jarRunFileName":"javaRun.bat",
+  "JSONFileName":"./Train/Traindata_3gram_ft.json",
+  "to_ArffFileName":"./trainRes/train3gram",
+  "selectFeatureNum":"1000"},
+
+ {"jarRunFileName":"javaRun.bat",
+  "JSONFileName":"./Train/Traindata_mixgram_ft.json",
+  "to_ArffFileName":"./trainRes/trainmixgram",
+  "selectFeatureNum":"1000"},
+
+ {"jarRunFileName":"javaRun.bat",
+  "JSONFileName":"./Test/Testdata_1gram_ft.json",
+  "to_ArffFileName":"./testRes/test1gram",
+  "selectFeatureNum":"1000"},
+
+ {"jarRunFileName":"javaRun.bat",
+  "JSONFileName":"./Test/Testdata_2gram_ft.json",
+  "to_ArffFileName":"./testRes/test2gram",
+  "selectFeatureNum":"1000"},
+
+ {"jarRunFileName":"javaRun.bat",
+  "JSONFileName":"./Test/Testdata_3gram_ft.json",
+  "to_ArffFileName":"./testRes/test3gram",
+  "selectFeatureNum":"1000"},
+
+ {"jarRunFileName":"javaRun.bat",
+  "JSONFileName":"./Test/Testdata_mixgram_ft.json",
+  "to_ArffFileName":"./testRes/testmixgram",
+  "selectFeatureNum":"1000"}
+]

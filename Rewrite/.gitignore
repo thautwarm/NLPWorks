@@ -1,0 +1,11 @@
+__pycache__/
+.git/
+entities
+log/
+WekaData/
+Training/
+trainingRes/
+Test/
+testRes/
+.idea/
+

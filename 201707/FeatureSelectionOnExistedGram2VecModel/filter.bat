@@ -1,0 +1,1 @@
+kotlinc FeatureSelection.kt -include-runtime -cp ./lib/weka.jar -d Selector.jar
