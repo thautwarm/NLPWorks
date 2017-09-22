@@ -11,3 +11,9 @@ testRes/
 weka/
 ontology_index
 abstract_index
+entities
+java.*
+results/
+tmp/
+Models/
+

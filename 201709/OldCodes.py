@@ -21,10 +21,6 @@ def makeX(dictArray1, dictArray2):
     return X[:N], X[N:]
 
 
-from ooutils.io import  load
-
-ettFile  = 'entities'
-entities = load(ettFile)
 
 
 

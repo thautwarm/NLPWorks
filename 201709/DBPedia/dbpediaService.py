@@ -4,7 +4,7 @@ Created on Sun May 28 23:18:12 2017
 
 @author: thautwarm
 """
-from typing import Dict, List, Tuple, Any
+from typing import Dict, List, Tuple, Any, Set
 from SPARQLWrapper import SPARQLWrapper, JSON
 from collections import defaultdict
 def beginWith(Astr, begin):
@@ -141,7 +141,7 @@ class DBPediaSPARQL:
         return Ret
 
     @staticmethod
-    def getRelatedWithAbstractFromEntity(entity:str, ontology_index ,abstract_index, min_select = 30, max_select = 200) -> int:
+    def getRelatedWithAbstractFromEntity(entity:str, ontology_index ,abstract_index, min_select = 30, max_select = 200) -> Tuple[Set[str],Set[str]]:
         sparql = SPARQLWrapper("http://dbpedia.org/sparql")
         sparql.setMethod("POST")
         body = f"""
@@ -163,10 +163,13 @@ class DBPediaSPARQL:
         num     = len(set([results['res']['value'] for results in results['results']['bindings']]))
         if num < min_select:
             return None
-
+        related_entities = set()
+        onto_refered     = set()
         for result in results["results"]["bindings"]:
             res      = result["res"]["value"][headerLength:]
             ontology = result['type']['value'][ontologyheaderLength:]
+            onto_refered.add(ontology)
+            related_entities.add(res)
             if res not in ontology_index:
                 ontology_index[res] = {ontology}
             else:
@@ -174,7 +177,7 @@ class DBPediaSPARQL:
             if res not in abstract_index:
                 abstract_index[res] = result["abstract"]["value"]
 
-        return num
+        return related_entities, onto_refered
 
     @staticmethod
     def GetEntityAbstPairsFromCapitalChar():

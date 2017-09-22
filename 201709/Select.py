@@ -6,7 +6,7 @@ from DBPedia.dbpediaService import DBPediaSPARQL
 import warnings
 from random import shuffle
 import math
-from typing import List, Dict, Any, Callable, Tuple
+from typing import List, Dict, Any, Callable, Tuple, Set
 from scalable.core import fn
 
 
@@ -51,12 +51,13 @@ def selectClusterCh(ch:str,
                     func:Callable[[str],List[str]] = DBPediaSPARQL.getFromCapitalChar,
                     count_foreach = 100,
                     min_select = 30,
-                    max_select = 200) -> Dict[str, str]:
+                    max_select = 200) -> list:
     def _f1(char:chr):
         return func(char, limit=count_foreach*10)
-    def _f2(ent:str) -> Dict[str, Dict[str, Any]]:
+    def _f2(ent:str) -> Set[str]:
         return DBPediaSPARQL.getRelatedWithAbstractFromEntity(ent, ontology_index, abstract_index, min_select, max_select)
-    entities = _f1(ch)
+    entities       = _f1(ch)
+    final_entities = []
     _count=0
     for entity in entities:
         try:
@@ -64,15 +65,16 @@ def selectClusterCh(ch:str,
         except Exception as e:
             print(e)
             continue
-        print(r)
         if r is None:
             continue
+        es, os = r
+        final_entities.append((entity, es, os))
         _count+=1
         print(f'add Related Entities from <= {entity}')
         if _count == count_foreach: break
     else:
         warnings.warn(f"Not Enough entities for group[{ch}]")
-
+    return final_entities
 
 
 def SelectCluster(lst : List[str], func:Callable[[str],List[str]] = DBPediaSPARQL.getFromCapitalChar, count_foreach = 100, select_foreach = 200) -> Dict[str, Dict[str, str]]:
@@ -80,7 +82,7 @@ def SelectCluster(lst : List[str], func:Callable[[str],List[str]] = DBPediaSPARQ
     def _f1(char:chr):
         return func(char, limit=count_foreach*10)
 
-    def _f2(ent:str) -> Dict[str, Dict[str, Any]]:
+    def _f2(ent:str) -> Set[str]:
         return DBPediaSPARQL.getRelatedWithAbstractFromEntity(ent, select_foreach)
     ret = dict()
     for ch in lst:

@@ -15,10 +15,10 @@ except Exception: # any
     ontology_index = dict()
     abstract_index = dict()
     def CharAction(ch : str):
-        selectClusterCh(ch, ontology_index, abstract_index, count_foreach=100, min_select=30, max_select=200)
-        print(f"Finished {ch}.")
+        return selectClusterCh(ch, ontology_index, abstract_index, count_foreach=100, min_select=30, max_select=200)
     with concurrent.futures.thread.ThreadPoolExecutor(max_workers=26) as executor:
-        executor.map(CharAction, grp)
+        entities = fn.reduce(lambda x,y: x+y)(executor.map(CharAction, grp))
+    dump(entities,'entities')
     dump(ontology_index, "ontology_index")
     dump(abstract_index, "abstract_index")
 
