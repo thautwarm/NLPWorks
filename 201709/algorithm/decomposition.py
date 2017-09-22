@@ -9,7 +9,7 @@ Created on Wed Aug  2 01:05:57 2017
 import numpy as np
 from sklearn.decomposition.pca import PCA
 from sklearn.lda import LDA
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import SelectKBest
 from scipy.stats import pearsonr
@@ -94,9 +94,10 @@ def de_f_and_p_value(X,y):
     def _func(X1,X2):
         return clf.transform(X1),clf.transform(X2)
     return _func
-        
 
-    
+nameAssemble = list(filter(lambda x:x.startswith('de_'), globals()))
+
+
     
     
     

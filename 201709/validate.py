@@ -1,22 +1,28 @@
 from OldCodes import makeX
 from ooutils.io import loadJson, load
-from scalable.core import fn
-import numpy as np
 import os
 from algorithm.decomposition import *
 from algorithm.stats import stats
+from algorithm.Methods import methods
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import Normalizer
 import pandas as pd
-import numba as nb
-from typing import Dict, Tuple,List
-model=lambda x: loadJson(f'./Models/{x}')
+import numpy as np
+from typing import Dict, Tuple
+model = lambda x: loadJson(f'./Models/pythonMd-{x}.json')
 ontology_index = load('ontology_index')
 entities       = load('entities')
 
-def validateOn(fitMethod:"learning method", decomp:"decomposition method" , Model: Dict[str,Tuple[Dict[int,float]]]):
+def validateOn(fitMethod:str, decomp:str , model_name:str):
+    Model: Dict[str, Tuple[Dict[int, float]]] = model(model_name)
+    decomper = eval(decomp)
+    saver    = []
+    path     = f"results/{model_name}/{decomp}/{fitMethod}"
+    try:
+        os.makedirs(path)
+    except:pass
     for entity, relatedEntities, referedOntologies in entities:
-        stats_to_here = f"results/{entity}"
+        stats_to_here = f"{path}/{entity}"
         pos_datas         = list(relatedEntities)
         neg_datas         = []
         total_pos     = len(pos_datas)
@@ -36,12 +42,12 @@ def validateOn(fitMethod:"learning method", decomp:"decomposition method" , Mode
         datas_shuffled    = np.take(datas, shuffled, axis=0)
         targets_shuffled  = np.take(targets, shuffled, axis=0)
         ori_names_shuffled= np.take(ori_names, shuffled, axis=0)
-        if fitMethod.isCluster:
+        if hasattr(methods[fitMethod], "isCluster"):
             train_X = datas_shuffled
             train_y = test_y = targets_shuffled
             std     = Normalizer()
             train_X = std.fit_transform(train_X)
-            train_X, test_X = decomp(train_X, train_y)(train_X, train_X)
+            train_X, test_X = decomper(train_X, train_y)(train_X, train_X)
             ori_names_test  = ori_names_shuffled
 
         else:
@@ -53,40 +59,27 @@ def validateOn(fitMethod:"learning method", decomp:"decomposition method" , Mode
                                                  test_size = 0.33)
             std=Normalizer()
             std.fit(train_X);train_X=std.transform(train_X);test_X=std.transform(test_X)
-            train_X, test_X = decomp(train_X, train_y)(train_X, test_X)
-        clf = fitMethod()
+            train_X, test_X = decomper(train_X, train_y)(train_X, test_X)
+        clf = methods[fitMethod]()
         clf.fit(train_X, train_y)
         y_pred = clf.predict(test_X)
         res, details=stats(test_y, y_pred)
         df_results = pd.DataFrame( [
-            ori_names_test[details.TP],
-            ori_names_test[details.TN],
-            ori_names_test[details.FP],
-            ori_names_test[details.FN],
+                                    ori_names_test[details.TP],
+                                    ori_names_test[details.TN],
+                                    ori_names_test[details.FP],
+                                    ori_names_test[details.FN],
                                    ]
                                    ).T
         df_results.columns = ('TP','TN','FP','FN')
         df_results.fillna(value = "").to_csv(f"{stats_to_here}.csv", index=False, encoding='utf8')
-        print(entity,' / ', fitMethod.name )
+        print(entity,' / ', fitMethod )
         print(pd.Series(res))
-        res['fitMethod'] = fitMethod.name
+        res['fitMethod']  = fitMethod
         res['fromEntity'] = entity
+        saver.append(res)
+    database              = pd.DataFrame(saver)
+    database.fillna(value = "").to_csv(f"{path}.csv", index=False, encoding='utf8')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    pass
 
 

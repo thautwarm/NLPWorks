@@ -12,7 +12,7 @@ weka/
 ontology_index
 abstract_index
 entities
-java.*
+java[a-zA-Z0-9\-]*
 results/
 tmp/
 Models/

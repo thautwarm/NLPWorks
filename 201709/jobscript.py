@@ -21,8 +21,8 @@ for count in (None, 1, 2, 3):
         max_count = 3
     else:
         min_count = max_count = count
-    feature_trans_model_to_save = f"javaObj-gram-{count}"
-    WekaResults                 = f"javaWekaMd-gram-{count}"
+    feature_trans_model_to_save = f"tmp/javaObj-gram-{count}"
+    WekaResults                 = f"tmp/javaWekaMd-gram-{count}"
     pathForPyModel              = f"Models/pythonMd-gram-{count}.json"
     train(weka_source)(feature_trans_model_to_save)(min_count)(max_count)(WekaResults)
     toPyModel(weka_source)(WekaResults)(pathForPyModel)

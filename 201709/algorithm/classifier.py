@@ -1,5 +1,4 @@
 from .utils import np
-from functools import partial
 
 class cluster:
     def __init__(self, clf):
@@ -35,3 +34,5 @@ def wrap(method, **params):
                 strict_params[param_name] = params[param_name]
         return method(**strict_params)
     return _func
+
+

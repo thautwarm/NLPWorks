@@ -1,6 +1,6 @@
-from .utils import manager, np, globals_manager, block, richList
+from .utils import manager, np
 from sklearn.metrics import roc_auc_score
-c = block()
+
 
 
 def stats(y_true: 'np.ndarray', y_pred: 'np.ndarray'):
@@ -35,31 +35,3 @@ def stats(y_true: 'np.ndarray', y_pred: 'np.ndarray'):
     return res, detail_manager
 
 
-def undersampling(X, y, Ori):
-    if not isinstance(X,np.ndarray): X = np.array(X)
-    if not isinstance(y,np.ndarray): y = np.array(y)
-    if not isinstance(Ori,np.ndarray): Ori = np.array(Ori)
-    
-    res = richList(y).groupBy(lambda x: x == 1)@(lambda this:
-                this.map(lambda x: (x, len(this[x])))@(lambda this:dict(this.tolist())))
-    to_under, lessCase = (False, True) if res[True] < res[False] else (True, False)
-    
-    index = np.random.permutation(res[to_under])
-
-    def _getSmaple(var): return (
-        var[y == to_under][index[:res[lessCase]]], var[y == lessCase])
-
-    return np.hstack(_getSmaple(X)),\
-           np.hstack(_getSmaple(y)),\
-           np.hstack(_getSmaple(y))
-
-
-
-def getSample(df: 'pandas.DataFrame', n:('sample_num',int), *columns:[("column",str),("column",str),...] ) :
-    
-    if not columns:
-        return ValueError("Nothing Input.")
-    
-    index = np.random.permutation(df.shape[0])[:n]
-
-    return tuple(df.loc[index,column] for column in columns)

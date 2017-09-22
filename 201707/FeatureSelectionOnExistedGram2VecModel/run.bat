@@ -1,1 +1,0 @@
-python dicttake.py task.json
