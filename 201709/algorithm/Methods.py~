@@ -1,0 +1,22 @@
+from .classifier import  cluster, wrap
+from sklearn.cluster import KMeans
+from sklearn.svm import SVC
+from sklearn.cluster import MeanShift
+from sklearn.cluster import Birch
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.dummy import DummyClassifier
+
+
+methods = {
+           'SVM-rbf': wrap(SVC,probability=True),
+           }
+
+methods['Birch'].isCluster = True
+methods['KMeans'].isCluster = True
+methods['MeanShift'].isCluster = True
+
+
