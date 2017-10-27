@@ -20,10 +20,10 @@ methods = {'Birch': wrap(cluster, lazy_clf=wrap(Birch, n_clusters=2)),
            'Naive_Bayes': GaussianNB,
            'RandomForest': RandomForestClassifier,
            'SVM-rbf': wrap(SVC, probability=True),
+           'SVM-linear': wrap(SVC, kernel='linear', probability=True),
            'Dummy': DummyClassifier}
 
 methods['Birch'].isCluster = True
 methods['KMeans'].isCluster = True
 methods['MeanShift'].isCluster = True
-
 
